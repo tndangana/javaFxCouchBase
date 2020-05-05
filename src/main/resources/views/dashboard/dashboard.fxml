@@ -10,11 +10,11 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="609.0" prefWidth="944.0" stylesheets="@../../dark-theme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="home.controllers.DashboardController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="609.0" prefWidth="944.0" stylesheets="@../../dark-theme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zw.co.abn.covid.controller.DashboardController">
     <children>
         <Pane layoutY="-2.0" prefHeight="139.0" prefWidth="950.0" style="-fx-background-color: #000000;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-6.0" AnchorPane.topAnchor="-2.0">
             <children>
-                <Label layoutX="73.0" layoutY="30.0" text="Dashboard" textFill="WHITE">
+                <Label layoutX="73.0" layoutY="30.0" text="Big Nerd" textFill="WHITE">
                     <font>
                         <Font size="48.0" />
                     </font>
@@ -106,6 +106,7 @@
                     </rowConstraints>
                     <children>
                         <PieChart fx:id="pieChart" prefHeight="287.0" prefWidth="278.0" style="-fx-background-color: #fff;" stylesheets="@../css/fullpackstyling.css" />
+                  <PieChart fx:id="pieChart1" layoutX="10.0" layoutY="10.0" prefHeight="287.0" prefWidth="278.0" style="-fx-background-color: #fff;" stylesheets="@../css/fullpackstyling.css" />
                     </children>
                 </GridPane>
             </items>
