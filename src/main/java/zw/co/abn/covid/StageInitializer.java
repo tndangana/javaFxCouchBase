@@ -9,11 +9,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import zw.co.abn.covid.util.AssistantUtil;
 
 @Component
 public class StageInitializer implements ApplicationListener<Main.StageReadyEvent> {
 
-    @Value("classpath:/views/user/userList.fxml")
+    @Value("classpath:/views/login/login.fxml")
     private Resource resource;
     private final String stageTitle;
 
@@ -38,9 +39,9 @@ public class StageInitializer implements ApplicationListener<Main.StageReadyEven
             Parent parent = fxmlLoader.load();
             Stage stage = event.getStage();
             stage.setTitle(stageTitle);
-            stage.setScene(new Scene(parent, 800, 800));
+            stage.setScene(new Scene(parent, 400, 400));
+            AssistantUtil.setStageIcon(stage);
             stage.show();
-
 
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -37,10 +37,7 @@ public class CountryController implements Initializable {
     private AnchorPane mainContainer;
     @FXML
     private JFXTextField name;
-    @FXML
-    private JFXButton saveButton;
-    @FXML
-    private JFXButton cancelButton;
+
 
     /**
      * Initializes the controller class.
@@ -53,27 +50,19 @@ public class CountryController implements Initializable {
     @FXML
     private void addCountry(ActionEvent event) {
         //check to see if its empty
-        Optional<String> countryName = Optional.ofNullable(name.getText());
-         if(!countryName.isPresent()){
-              AlertInformation.showMaterialDialog(rootPane,mainContainer,new ArrayList<>(),"Empty field","Please enter the empty field !!");
-              return;
-         }
-
-         //check to see if its not in the Database
-//        if (DataHelper.isBookExists(bookID)) {
-//            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Duplicate book id", "Book with same Book ID exists.\nPlease use new ID");
-//            return;
-//        }
+           if(name.getText().isEmpty()){
+               AlertInformation.showMaterialDialog(rootPane,mainContainer,new ArrayList<>(),"Empty field","Please enter the empty field !!");
+               return;
+           }
+           //check duplicate
          Country  country = new Country();
-         country.setName(countryName.get());
+         country.setName(name.getText());
+         if(!country.getName().isEmpty()){
+             AlertInformation.showMaterialDialog(rootPane,mainContainer,new ArrayList<>(),"Success","Country field has been successfully saved");
+
+         }
          //save
-//        boolean result = DataHelper.insertNewBook(book);
-//        if (result) {
-//            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "New book added", bookName + " has been added");
-//            clearEntries();
-//        } else {
-//            AlertMaker.showMaterialDialog(rootPane, mainContainer, new ArrayList<>(), "Failed to add new book", "Check all the entries and try again");
-//        }
+
 
     }
 

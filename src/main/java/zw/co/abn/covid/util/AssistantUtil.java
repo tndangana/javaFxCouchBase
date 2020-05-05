@@ -1,37 +1,24 @@
 package zw.co.abn.covid.util;
 
-import com.jfoenix.controls.JFXButton;
-import javafx.event.ActionEvent;
+
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.StackPane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import library.assistant.alert.AlertMaker;
-import library.assistant.export.pdf.ListToPDF;
-import library.assistant.ui.main.MainController;
-import library.assistant.ui.settings.Preferences;
-
-import java.awt.*;
-import java.io.File;
+import zw.co.abn.covid.StageInitializer;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-public class LibraryAssistantUtil {
+public class AssistantUtil {
 
-    public static final String ICON_IMAGE_LOC = "/resources/icon.png";
-    public static final String MAIL_CONTENT_LOC = "/resources/mail_content.html";
+    public static final String ICON_IMAGE_LOC = "/icon.png";
     private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss a");
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -56,43 +43,11 @@ public class LibraryAssistantUtil {
             stage.show();
             setStageIcon(stage);
         } catch (IOException ex) {
-            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StageInitializer.class.getName()).log(Level.SEVERE, null, ex);
         }
         return controller;
     }
 
-    public static Float getFineAmount(int totalDays) {
-        Preferences pref = Preferences.getPreferences();
-        Integer fineDays = totalDays - pref.getnDaysWithoutFine();
-        Float fine = 0f;
-        if (fineDays > 0) {
-            fine = fineDays * pref.getFinePerDay();
-        }
-        return fine;
-    }
-
-    public static void initPDFExprot(StackPane rootPane, Node contentPane, Stage stage, List<List> data) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save as PDF");
-        FileChooser.ExtensionFilter extFilter
-                = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");
-        fileChooser.getExtensionFilters().add(extFilter);
-        File saveLoc = fileChooser.showSaveDialog(stage);
-        ListToPDF ltp = new ListToPDF();
-        boolean flag = ltp.doPrintToPdf(data, saveLoc, ListToPDF.Orientation.LANDSCAPE);
-        JFXButton okayBtn = new JFXButton("Okay");
-        JFXButton openBtn = new JFXButton("View File");
-        openBtn.setOnAction((ActionEvent event1) -> {
-            try {
-                Desktop.getDesktop().open(saveLoc);
-            } catch (Exception exp) {
-                AlertMaker.showErrorMessage("Could not load file", "Cant load file");
-            }
-        });
-        if (flag) {
-            AlertMaker.showMaterialDialog(rootPane, contentPane, Arrays.asList(okayBtn, openBtn), "Completed", "Member data has been exported.");
-        }
-    }
 
     public static String formatDateTimeString(Date date) {
         return DATE_TIME_FORMAT.format(date);
@@ -113,12 +68,5 @@ public class LibraryAssistantUtil {
         return pattern.matcher(emailID).matches();
     }
 
-    public static void openFileWithDesktop(File file) {
-        try {
-            Desktop desktop = Desktop.getDesktop();
-            desktop.open(file);
-        } catch (IOException ex) {
-            Logger.getLogger(LibraryAssistantUtil.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+
 }

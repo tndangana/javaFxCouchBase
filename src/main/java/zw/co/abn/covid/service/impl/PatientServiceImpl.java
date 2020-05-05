@@ -1,41 +1,56 @@
 package zw.co.abn.covid.service.impl;
 
-import com.couchbase.lite.CouchbaseLiteException;
-import com.couchbase.lite.Database;
-import com.couchbase.lite.Document;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.couchbase.lite.*;
 import org.springframework.stereotype.Service;
 import zw.co.abn.covid.configuration.DatabaseConfiguration;
 import zw.co.abn.covid.model.Patient;
 
 import zw.co.abn.covid.service.PatientService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PatientServiceImpl implements PatientService {
+
 
     private final DatabaseConfiguration databaseConfiguration;
     private final Database database;
 
 
     public PatientServiceImpl() {
-        this.databaseConfiguration = new DatabaseConfiguration();
+        this.databaseConfiguration = DatabaseConfiguration.getInstance();
         this.database = this.databaseConfiguration.getDatabase();
     }
 
     @Override
     public Optional<Patient> findbyId(String id) {
-//        return Optional.of(databaseConfiguration.getDatabase());
-        return Optional.ofNullable(null);
+        Document doc = database.getDocument(id);
+        Patient patient=(Patient) doc.getProperties();
+        return Optional.ofNullable(patient);
     }
 
     @Override
     public Optional<List<Patient>> findAll() {
-        return Optional.empty();
+//        List<Map<String, Object>> patientList = new ArrayList<>();
+          List<Patient> patientList = new ArrayList<>();
+        try {
+            Query query = database.getView("patients").createQuery();
+
+            QueryEnumerator result = query.run();
+            System.out.println("~~~~~~~~~~~~~"+result);
+            for (Iterator<QueryRow> it = result; it.hasNext(); ) {
+                QueryRow row = it.next();
+
+                patientList.add((Patient) row.getDocument().getProperties());
+            }
+            patientList.stream().forEach(patient -> {
+                System.out.println("********************"+patient.getFirstName());
+            });
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+
+        return Optional.ofNullable(patientList);
     }
 
     @Override
@@ -47,7 +62,6 @@ public class PatientServiceImpl implements PatientService {
         try {
             //save patient
             patient.setId(document.putProperties(properties).getDocument().getId());
-
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
@@ -56,7 +70,14 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public void deleteById(String id) {
-
+    public boolean deleteById(String id) {
+        Boolean isDeleted = Boolean.FALSE;
+        try {
+            Document task = database.getDocument(id);
+           isDeleted=  task.delete();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+        return isDeleted;
     }
 }

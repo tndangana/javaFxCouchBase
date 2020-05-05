@@ -1,29 +1,22 @@
 package zw.co.abn.covid.model;
 
-import lombok.Data;
 
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 
 public class Patient extends BaseId{
-    
-    private String id;
+
     private String firstName;
     private String lastName;
     private LocalDate dateOfBirth;
-    private Gender gender;
+    private String gender;
 
 
-    @Override
-    public String getId() {
-        return id;
+    public String getGender() {
+        return gender;
     }
 
-    @Override
-    public void setId(String id) {
-        this.id = id;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getFirstName() {
@@ -50,15 +43,9 @@ public class Patient extends BaseId{
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Gender getGender() {
-        return gender;
-    }
 
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
 
-    public Patient(String firstName, String lastName, LocalDate dateOfBirth, Gender gender) {
+    public Patient(String firstName, String lastName, LocalDate dateOfBirth, String gender) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;

@@ -26,6 +26,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import zw.co.abn.covid.alert.AlertInformation;
 import zw.co.abn.covid.model.Country;
+import zw.co.abn.covid.util.AssistantUtil;
 
 /**
  * FXML Controller class
@@ -51,7 +52,14 @@ public class CountryListController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
+    }
+
+
+    private Stage getStage() {
+        return (Stage) rootPane.getScene().getWindow();
+    }
+
+
 
     @FXML
     private void handleRefresh(ActionEvent event) {
@@ -85,10 +93,13 @@ public class CountryListController implements Initializable {
 
     @FXML
     private void addCountry(ActionEvent event) {
+        AssistantUtil.loadWindow(getClass().getResource("/views/country/country.fxml"), "Add New Country", null);
+
     }
 
     @FXML
     private void closeStage(ActionEvent event) {
+        getStage().close();
     }
     
 }

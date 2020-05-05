@@ -8,6 +8,6 @@ public interface IService<T> {
     Optional<T> findbyId(String id);
     Optional<List<T>> findAll();
     T save(T t);
-    void deleteById(String id);
+    boolean deleteById(String id);
 
 }

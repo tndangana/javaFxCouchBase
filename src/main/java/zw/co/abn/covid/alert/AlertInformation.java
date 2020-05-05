@@ -41,7 +41,7 @@ public class AlertInformation {
     private static void styleAlert(Alert alert) {
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add(AlertInformation.class.getResource("/resources/dark-theme.css").toExternalForm());
+        dialogPane.getStylesheets().add(AlertInformation.class.getResource("/dark-theme.css").toExternalForm());
         dialogPane.getStyleClass().add("custom-alert");
     }
 

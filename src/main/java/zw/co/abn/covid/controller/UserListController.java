@@ -18,8 +18,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import org.springframework.stereotype.Controller;
 import zw.co.abn.covid.model.User;
+import zw.co.abn.covid.util.AssistantUtil;
 
 /**
  * FXML Controller class
@@ -67,6 +69,10 @@ public class UserListController implements Initializable {
         mobileNumber.setCellValueFactory(new PropertyValueFactory<>("mobileNumber"));
     }
 
+    private Stage getStage() {
+        return (Stage) tableView.getScene().getWindow();
+    }
+
 
     public void loadData(){
         userObservableList.clear();
@@ -93,10 +99,13 @@ public class UserListController implements Initializable {
 
     @FXML
     private void addUser(ActionEvent event) {
+        AssistantUtil.loadWindow(getClass().getResource("/views/user/user.fxml"), "Add New User", null);
+
     }
 
     @FXML
     private void closeStage(ActionEvent event) {
+        getStage().close();
     }
     
 }

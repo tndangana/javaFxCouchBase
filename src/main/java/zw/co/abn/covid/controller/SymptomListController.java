@@ -19,9 +19,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import org.springframework.stereotype.Controller;
 import zw.co.abn.covid.model.Patient;
 import zw.co.abn.covid.model.Symptoms;
+import zw.co.abn.covid.util.AssistantUtil;
 
 /**
  * FXML Controller class
@@ -54,6 +56,11 @@ public class SymptomListController implements Initializable {
         loadData();
     }
 
+    private Stage getStage() {
+        return (Stage) rootPane.getScene().getWindow();
+    }
+
+
 
     public void initializeTable(){
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -78,10 +85,13 @@ public class SymptomListController implements Initializable {
 
     @FXML
     private void addSymptom(ActionEvent event) {
+        AssistantUtil.loadWindow(getClass().getResource("/views/symptoms/symptoms.fxml"), "Add New Symptom", null);
     }
 
     @FXML
     private void closeStage(ActionEvent event) {
+
+        getStage().close();
     }
     
 }
