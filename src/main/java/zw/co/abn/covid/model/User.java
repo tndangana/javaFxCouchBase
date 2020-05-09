@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
  */
 
 @Data
+@NoArgsConstructor
 public class User  extends BaseId{
     
     private String firstName;
@@ -24,9 +25,6 @@ public class User  extends BaseId{
     private String mobileNumber;
     private Boolean verified = Boolean.FALSE;
 
-    public User() {
-
-    }
 
     public User(String firstName, String lastName, String email, String mobileNumber) {
         this.firstName = firstName;

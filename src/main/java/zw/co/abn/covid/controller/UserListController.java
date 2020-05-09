@@ -84,6 +84,7 @@ public class UserListController implements Initializable {
         userService.findAll(Constant.USERVIEW).stream().forEach(o -> {
             Map<String,Object> map = (Map<String, Object>) o;
             User user = new User();
+            user.setFirstName(map.get("firstName")!=null?map.get("firstName").toString():"");
             user.setMobileNumber(map.get("mobileNumber")!=null?map.get("mobileNumber").toString():"");
             user.setEmail(map.get("email")!=null?map.get("email").toString():"");
             user.setLastName(map.get("lastName")!=null?map.get("lastName").toString():"");

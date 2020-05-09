@@ -30,6 +30,12 @@ public class Main extends Application {
     }
 
 
+    //spring security will be used
+    //for the purpose of login use
+//    username ===>admin
+//    password ===> admin
+
+
      static class StageReadyEvent extends ApplicationEvent {
         public StageReadyEvent(Stage primaryStage) {
             super(primaryStage);
