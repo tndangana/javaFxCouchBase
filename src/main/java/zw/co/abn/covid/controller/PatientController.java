@@ -10,8 +10,9 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
@@ -19,16 +20,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import zw.co.abn.covid.alert.AlertInformation;
-import zw.co.abn.covid.model.Gender;
 import zw.co.abn.covid.model.Patient;
-import zw.co.abn.covid.service.PatientService;
+import zw.co.abn.covid.service.impl.GenericService;
+import zw.co.abn.covid.util.Constant;
 
 /**
  * FXML Controller class
@@ -54,8 +53,11 @@ public class PatientController implements Initializable {
     private JFXButton cancelButton;
     @FXML
     private JFXComboBox<String> gender;
-    @Autowired
-    private PatientService patientService;
+    private Map<String,Object> map;
+    private Boolean isInEditMode = false;
+
+
+    private GenericService genericService = new GenericService();
 
     /**
      * Initializes the controller class.
@@ -67,11 +69,19 @@ public class PatientController implements Initializable {
         gender.setItems(list);
     }
 
+    private Stage getStage() {
+        return (Stage) rootPane.getScene().getWindow();
+    }
+
     @FXML
     private void addPatient(ActionEvent event) {
 
-        if(firstName.getText().isEmpty() || lastName.getText().isEmpty() || dateOfBirth.getValue().equals(null) || gender.getValue().isEmpty()){
-            AlertInformation.showMaterialDialog(rootPane,mainContainer,new ArrayList<>(),"Empty field","Please enter the empty field !!");
+        if(firstName.getText().isEmpty() || lastName.getText().isEmpty() || dateOfBirth.getValue().equals("") || gender.getValue().isEmpty()){
+            AlertInformation.showErrorMessage("Empty","Fields are empty");
+        }
+
+        if(isInEditMode==true){
+
 
         }
         Patient patient = new Patient();
@@ -79,16 +89,29 @@ public class PatientController implements Initializable {
         patient.setLastName(lastName.getText());
         patient.setDateOfBirth(dateOfBirth.getValue());
         patient.setGender(gender.getValue());
-
-        System.out.println("patient"+patient.getFirstName() + patient.getLastName() +patient.getGender()+ patient.getDateOfBirth());
-
-        // duplicate check
-
-        //save
-        patientService.save(patient);
-
+        Map<String,Object> patientMap= new HashMap<>();
+        patientMap.put("firstName",patient.getFirstName());
+        patientMap.put("lastName",patient.getLastName());
+        patientMap.put("gender",patient.getGender());
+        patientMap.put("dateOfBirth",patient.getDateOfBirth());
+        boolean saved = genericService.save(patientMap, Constant.PATIENT);
+        if(saved == true){
+            AlertInformation.showSuccesMessage("Saved","You have saved your country successfully");
+            getStage().close();
+            return;
+        }
 
     }
+
+    public void infalteUI(Map<String,Object> patient) {
+        map = patient;
+        firstName.setText(String.valueOf(patient.get("firstName")));
+        lastName.setText(String.valueOf(patient.get("lastName")));
+//        dateOfBirth.setValue((LocalDate) patient.get("dateOfBirth"));
+        gender.setValue((String) patient.get("gender"));
+        isInEditMode = Boolean.TRUE;
+    }
+
 
     @FXML
     private void cancel(ActionEvent event) {

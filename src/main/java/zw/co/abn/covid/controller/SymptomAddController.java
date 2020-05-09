@@ -8,9 +8,8 @@ package zw.co.abn.covid.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,6 +19,8 @@ import javafx.stage.Stage;
 import org.springframework.stereotype.Controller;
 import zw.co.abn.covid.alert.AlertInformation;
 import zw.co.abn.covid.model.Symptoms;
+import zw.co.abn.covid.service.impl.GenericService;
+import zw.co.abn.covid.util.Constant;
 
 /**
  * FXML Controller class
@@ -39,6 +40,7 @@ public class SymptomAddController implements Initializable {
     private JFXButton saveButton;
     @FXML
     private JFXButton cancelButton;
+    private GenericService genericService = new GenericService();
 
     /**
      * Initializes the controller class.
@@ -48,27 +50,31 @@ public class SymptomAddController implements Initializable {
         // TODO
     }
 
+    private Stage getStage() {
+        return (Stage) rootPane.getScene().getWindow();
+    }
+
+
 
     @FXML
     private void addSymptom(ActionEvent event) {
-        Optional<String> symptomName = Optional.of(name.getText());
-        if(!symptomName.isPresent()){
-            AlertInformation.showMaterialDialog(rootPane,mainContainer,new ArrayList<>(),"Empty field","Please enter the empty field !!");
+        Map<String,Object> objectMap = new HashMap<>();
+        if(name.getText().trim().isEmpty()){
+            AlertInformation.showErrorMessage("Empty","Please enter empty field !!");
+        }
+        objectMap.put("name",name.getText());
+        boolean saved = genericService.save(objectMap,Constant.SYMPTOMSVIEW);
+        if(saved == true){
+            AlertInformation.showSuccesMessage("Yay","Symptom has been saved");
+            getStage().close();
             return;
         }
 
-        //check to see if its existing in the database
-
-        Symptoms symptoms = new Symptoms();
-        symptoms.setName(symptomName.get());
-
-        //save
     }
 
     @FXML
     private void cancel(ActionEvent event) {
-        Stage stage = (Stage) rootPane.getScene().getWindow();
-        stage.close();
+        getStage().close();
     }
     
 }

@@ -23,12 +23,15 @@ public class DashboardController implements Initializable {
     private Label totalCountryCount;
     @FXML
     private Label totalUserCount;
-    @FXML
     private Label totalSymptomsCount;
     @FXML
     private Label totalPatientCount;
     @FXML
     private PieChart pieChart;
+    @FXML
+    private Label totalCovidPostiveCount;
+    @FXML
+    private PieChart pieChart1;
 
     /**
      * Initializes the controller class.
@@ -45,7 +48,7 @@ public class DashboardController implements Initializable {
         totalCountryCount.setText("2");
         totalUserCount.setText("23");
         totalPatientCount.setText("9");
-        totalSymptomsCount.setText("5");
+        totalCovidPostiveCount.setText("5");
     }
 
     private void loadChart()

@@ -6,6 +6,7 @@
 package zw.co.abn.covid.controller;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
@@ -20,8 +21,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.springframework.stereotype.Controller;
+import zw.co.abn.covid.alert.AlertInformation;
 import zw.co.abn.covid.model.User;
+import zw.co.abn.covid.service.impl.GenericService;
 import zw.co.abn.covid.util.AssistantUtil;
+import zw.co.abn.covid.util.Constant;
 
 /**
  * FXML Controller class
@@ -50,6 +54,7 @@ public class UserListController implements Initializable {
     private TableColumn<User, String> mobileNumber;
     @FXML
     private TableColumn<?, ?> verified;
+    private GenericService userService = new GenericService();
 
     /**
      * Initializes the controller class.
@@ -57,7 +62,7 @@ public class UserListController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         initiateTable();
-        loadData();
+        loadUserData();
     }
 
 
@@ -74,19 +79,24 @@ public class UserListController implements Initializable {
     }
 
 
-    public void loadData(){
+    public void loadUserData(){
         userObservableList.clear();
-
-        userObservableList.addAll(
-                new User("Tonderai","Ndangana","ndangana8@gmail.com","0772275148",Boolean.FALSE),
-                new User("Tonderai","Ndangana","ndangana8@gmail.com","0772275148",Boolean.FALSE),
-                new User("Tonderai","Ndangana","ndangana8@gmail.com","9887845845",Boolean.TRUE));
-
+        userService.findAll(Constant.USERVIEW).stream().forEach(o -> {
+            Map<String,Object> map = (Map<String, Object>) o;
+            User user = new User();
+            user.setMobileNumber(map.get("mobileNumber")!=null?map.get("mobileNumber").toString():"");
+            user.setEmail(map.get("email")!=null?map.get("email").toString():"");
+            user.setLastName(map.get("lastName")!=null?map.get("lastName").toString():"");
+            user.setVerified(map.get("verified")!=null?((Boolean) map.get("verified")).booleanValue():false);
+            user.setId(map.get("_id").toString());
+            userObservableList.add(user);
+        });
         tableView.setItems(userObservableList);
     }
 
     @FXML
     private void handleRefresh(ActionEvent event) {
+        loadUserData();
     }
 
     @FXML
@@ -95,6 +105,21 @@ public class UserListController implements Initializable {
 
     @FXML
     private void handleBookDeleteOption(ActionEvent event) {
+
+
+        String id = tableView.getSelectionModel().getSelectedItem().getId();
+        if(id.isEmpty()){
+            AlertInformation.showErrorMessage("Empty","Id not available");
+            return;
+        }
+        boolean isDeleted = userService.deleteById(Constant.USERVIEW,id);
+        if(isDeleted==true){
+            AlertInformation.showSuccesMessage("Success","User has been deleted successfully");
+            loadUserData();
+            return;
+        }else {
+            AlertInformation.showErrorMessage("Error","User has not been deleted try again");
+        }
     }
 
     @FXML

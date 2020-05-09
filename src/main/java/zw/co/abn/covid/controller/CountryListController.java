@@ -7,11 +7,14 @@ package zw.co.abn.covid.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,13 +23,19 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import lombok.Data;
 import zw.co.abn.covid.alert.AlertInformation;
 import zw.co.abn.covid.model.Country;
+import zw.co.abn.covid.service.impl.GenericService;
 import zw.co.abn.covid.util.AssistantUtil;
+import zw.co.abn.covid.util.Constant;
+
+import javax.swing.text.Document;
 
 /**
  * FXML Controller class
@@ -35,6 +44,10 @@ import zw.co.abn.covid.util.AssistantUtil;
  */
 public class CountryListController implements Initializable {
 
+
+
+
+    private ObservableList<Country> list = FXCollections.observableArrayList();
     @FXML
     private StackPane rootPane;
     @FXML
@@ -45,13 +58,32 @@ public class CountryListController implements Initializable {
     private TableColumn<Country, String> name;
     @FXML
     private TableColumn<?, ?> action;
+    private GenericService genericService = new GenericService();
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        initializeTable();
+        loadCountryList();
+    }
+
+
+    public void initializeTable(){
+        name.setCellValueFactory(new PropertyValueFactory<>("name"));
+    }
+
+    public void loadCountryList(){
+        list.clear();
+         genericService.findAll(Constant.COUNTRYVIEW).stream().forEach(o -> {
+             Map<String,Object> map = ( Map<String,Object>) o;
+             Country country = new Country();
+             country.setId(map.get("_id").toString());
+             country.setName(map.get("name")!=null?map.get("name").toString():"");
+             list.add(country);
+         });
+        tableView.setItems(list);
     }
 
 
@@ -63,24 +95,39 @@ public class CountryListController implements Initializable {
 
     @FXML
     private void handleRefresh(ActionEvent event) {
+        loadCountryList();
     }
 
     @FXML
     private void handleBookEditOption(ActionEvent event) {
 
-        Optional<Country> selectForEdit = Optional.ofNullable(tableView.getSelectionModel().getSelectedItem());
-        if(!selectForEdit.isPresent()){
-            AlertInformation.showErrorMessage("No country selected","Please select a country for edit");
+        Country country = tableView.getSelectionModel().getSelectedItem();
+
+        boolean exist = genericService.recordExist(Constant.COUNTRYVIEW,country.getId());
+        if(exist ==false){
+            AlertInformation.showErrorMessage("No country selected","Country with give id does not exist");
             return;
         }
+        Map<String, Object> properties = genericService.findById(Constant.COUNTRYVIEW,country.getId());
 
         try {
-            FXMLLoader  fxmlLoader = new FXMLLoader(getClass().getResource(""));
-            Parent parent = fxmlLoader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/country/country.fxml"));
+            Parent parent = loader.load();
 
+            CountryController controller = loader.getController();
+            controller.infalteUI(properties);
 
-        }catch (IOException e){
+            Stage stage = new Stage(StageStyle.DECORATED);
+            stage.setTitle("Edit Country");
+            stage.setScene(new Scene(parent));
+            stage.show();
+            AssistantUtil.setStageIcon(stage);
 
+            stage.setOnHiding((e) -> {
+                handleRefresh(new ActionEvent());
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
@@ -89,6 +136,19 @@ public class CountryListController implements Initializable {
 
     @FXML
     private void handleBookDeleteOption(ActionEvent event) {
+        String id = tableView.getSelectionModel().getSelectedItem().getId();
+        if(id.isEmpty()){
+           AlertInformation.showErrorMessage("Empty","Id not available");
+           return;
+        }
+        boolean isDeleted = genericService.deleteById(Constant.COUNTRYVIEW,id);
+        if(isDeleted==true){
+            AlertInformation.showSuccesMessage("Success","Country has been deleted succesfully");
+            loadCountryList();
+            return;
+        }else {
+            AlertInformation.showErrorMessage("Error","Country has been deleted try again");
+        }
     }
 
     @FXML
@@ -101,5 +161,8 @@ public class CountryListController implements Initializable {
     private void closeStage(ActionEvent event) {
         getStage().close();
     }
+
+
+
     
 }

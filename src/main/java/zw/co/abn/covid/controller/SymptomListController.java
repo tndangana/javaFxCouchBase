@@ -6,6 +6,7 @@
 package zw.co.abn.covid.controller;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.Observable;
 import java.util.ResourceBundle;
 
@@ -21,9 +22,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.springframework.stereotype.Controller;
+import zw.co.abn.covid.alert.AlertInformation;
 import zw.co.abn.covid.model.Patient;
 import zw.co.abn.covid.model.Symptoms;
+import zw.co.abn.covid.service.impl.GenericService;
 import zw.co.abn.covid.util.AssistantUtil;
+import zw.co.abn.covid.util.Constant;
 
 /**
  * FXML Controller class
@@ -46,6 +50,7 @@ public class SymptomListController implements Initializable {
     private TableColumn<Symptoms, String> name;
     @FXML
     private TableColumn<?, ?> action;
+    private GenericService genericService = new GenericService();
 
     /**
      * Initializes the controller class.
@@ -67,12 +72,21 @@ public class SymptomListController implements Initializable {
     }
 
     public void loadData(){
-        symptomsObservableList.addAll(new Symptoms("Fever"),new Symptoms("Headache"),new Symptoms("Dry Throat"));
+        symptomsObservableList.clear();
+        genericService.findAll(Constant.SYMPTOMSVIEW).stream().forEach(o -> {
+            Map<String,Object> map = (Map<String, Object>)o;
+            Symptoms symptoms = new Symptoms();
+            symptoms.setId(map.get("_id").toString());
+            symptoms.setName(map.get("name")!=null?map.get("name").toString():"");
+            symptomsObservableList.add(symptoms);
+        });
+
         tableView.setItems(symptomsObservableList);
     }
 
     @FXML
     private void handleRefresh(ActionEvent event) {
+        loadData();
     }
 
     @FXML
@@ -81,6 +95,20 @@ public class SymptomListController implements Initializable {
 
     @FXML
     private void handleBookDeleteOption(ActionEvent event) {
+
+        String id = tableView.getSelectionModel().getSelectedItem().getId();
+        if(id.isEmpty()){
+            AlertInformation.showErrorMessage("Empty","Id not available");
+            return;
+        }
+        boolean isDeleted = genericService.deleteById(Constant.SYMPTOMSVIEW,id);
+        if(isDeleted==true){
+            AlertInformation.showSuccesMessage("Success","Symptom has been deleted successfully");
+            loadData();
+            return;
+        }else {
+            AlertInformation.showErrorMessage("Error","Symptom has not been deleted try again");
+        }
     }
 
     @FXML
