@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 public class AssistantUtil {
 
+    //Company logo
     public static final String ICON_IMAGE_LOC = "/icon.png";
     private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss a");
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
@@ -26,6 +27,8 @@ public class AssistantUtil {
         stage.getIcons().add(new Image(ICON_IMAGE_LOC));
     }
 
+
+    //Loads listed windows/Stages in the system
     public static Object loadWindow(URL loc, String title, Stage parentStage) {
         Object controller = null;
         try {
@@ -49,24 +52,6 @@ public class AssistantUtil {
     }
 
 
-    public static String formatDateTimeString(Date date) {
-        return DATE_TIME_FORMAT.format(date);
-    }
-
-    public static String formatDateTimeString(Long time) {
-        return DATE_TIME_FORMAT.format(new Date(time));
-    }
-
-    public static String getDateString(Date date) {
-        return DATE_FORMAT.format(date);
-    }
-
-    public static boolean validateEmailAddress(String emailID) {
-        String regex = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        Pattern pattern = Pattern.compile(regex);
-        return pattern.matcher(emailID).matches();
-    }
 
 
 }
